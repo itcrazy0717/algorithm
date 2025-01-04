@@ -23,21 +23,3 @@
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
-
-.idea/compiler.xml
-.idea/inspectionProfiles/
-.idea/leetcode.iml
-.idea/libraries/Maven__com_google_code_findbugs_jsr305_3_0_2.xml
-.idea/libraries/Maven__com_google_errorprone_error_prone_annotations_2_1_3.xml
-.idea/libraries/Maven__com_google_guava_guava_26_0_jre.xml
-.idea/libraries/Maven__com_google_j2objc_j2objc_annotations_1_1.xml
-.idea/libraries/Maven__org_checkerframework_checker_qual_2_5_2.xml
-.idea/libraries/Maven__org_codehaus_mojo_animal_sniffer_annotations_1_14.xml
-.idea/misc.xml
-.idea/modules.xml
-.idea/uiDesigner.xml
-.idea/workspace.xml
-target/classes/META-INF/
-target/generated-sources/
-target/generated-test-sources/
-
