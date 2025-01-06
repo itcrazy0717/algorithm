@@ -13,7 +13,7 @@ public class BubbleSort {
      *
      * @param arrys
      */
-    public static void bubbleSort0(int[] arrys) {
+    public static void bubbleSort1(int[] arrys) {
         for (int i = 0; i < arrys.length; i++) {
             for (int j = 1; j < arrys.length - i; j++) {
                 // 从小到大排序
@@ -30,7 +30,7 @@ public class BubbleSort {
      *
      * @param arrys
      */
-    public static void bubbleSort1(int[] arrys) {
+    public static void bubbleSort2(int[] arrys) {
         int len = arrys.length;
         boolean switchEle = true;
         while (switchEle) {
@@ -51,7 +51,7 @@ public class BubbleSort {
      *
      * @param arrys
      */
-    public static void bubbleSort2(int[] arrys) {
+    public static void bubbleSort3(int[] arrys) {
         int len;
         int switchFlag = arrys.length;
         while (switchFlag > 0) {
@@ -84,9 +84,9 @@ public class BubbleSort {
         int[] arrys0 = {5, 4, 1, 7, 8};
         int[] arrys1 = {5, 4, 1, 7, 8};
         int[] arrys2 = {5, 4, 1, 7, 8};
-        bubbleSort0(arrys0);
-        bubbleSort1(arrys1);
-        bubbleSort2(arrys2);
+        bubbleSort1(arrys0);
+        bubbleSort2(arrys1);
+        bubbleSort3(arrys2);
         for (int element : arrys0) {
             System.out.print(element + " ");
         }

@@ -7,6 +7,21 @@ package com.itcrazy.algorithm.sort;
  */
 public class QuickSort {
 
+    /**
+     * 快速排序
+     * by dengxin.chen
+     *
+     * @param arrays
+     * @param left
+     * @param right
+     */
+    public static void quickSort1(int[] arrays, int left, int right) {
+        if (left < right) {
+            int index = findPartitionIndex(arrays, left, right);
+            quickSort1(arrays, left, index - 1);
+            quickSort1(arrays, index + 1, right);
+        }
+    }
 
     /**
      * 快速排序
@@ -16,11 +31,30 @@ public class QuickSort {
      * @param left
      * @param right
      */
-    public static void quickSort(int[] arrays, int left, int right) {
+    public static void quickSort2(int[] arrays, int left, int right) {
         if (left < right) {
-            int index = findPartitionIndex(arrays, left, right);
-            quickSort(arrays, left, index - 1);
-            quickSort(arrays, index + 1, right);
+            int i = left;
+            int j = right;
+            int tmp = arrays[left];
+            while (i < j) {
+                while (arrays[j] >= tmp && i < j) {
+                    j--;
+                }
+                if (i < j) {
+                    arrays[i] = arrays[j];
+                    i++;
+                }
+                while (arrays[i] < tmp && i < j) {
+                    i++;
+                }
+                if (i < j) {
+                    arrays[j] = arrays[i];
+                    j--;
+                }
+                arrays[i] = tmp;
+                quickSort2(arrays, left, i - 1);
+                quickSort2(arrays, i + 1, right);
+            }
         }
     }
 
@@ -58,9 +92,15 @@ public class QuickSort {
     }
 
     public static void main(String[] args) {
-        int[] arrys0 = {5, 9, 1, 7, 8};
-        quickSort(arrys0, 0, arrys0.length - 1);
-        for (int element : arrys0) {
+        int[] arrays1 = {6, 9, 1, 7, 2};
+        int[] arrays2 = {10, 3, 1, 7, 2};
+        quickSort1(arrays1, 0, arrays1.length - 1);
+        quickSort2(arrays2, 0, arrays2.length - 1);
+        for (int element : arrays1) {
+            System.out.print(element + " ");
+        }
+        System.out.println();
+        for (int element : arrays2) {
             System.out.print(element + " ");
         }
     }
