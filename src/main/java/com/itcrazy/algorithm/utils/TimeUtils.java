@@ -123,6 +123,7 @@ public class TimeUtils {
         int totalDays = day;
         for (int monthIndex = 1; monthIndex <= month - 1; monthIndex++) {
             Integer monthTotalDay = FIXED_MONTH_MAP_DAY.get(monthIndex);
+            // 为空，则表明是2月，则通过平闰年进行判断总天数
             if (Objects.isNull(monthTotalDay)) {
                 if (leapYear) {
                     totalDays += LEAP_YEAR_FEB_DAY_VALUE;
