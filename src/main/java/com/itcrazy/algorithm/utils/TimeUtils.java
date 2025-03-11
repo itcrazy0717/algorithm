@@ -6,7 +6,7 @@ import java.util.Objects;
 
 /**
  * @author: dengxin.chen
- * @version: $ TimeUtils.java,v0.1 2025-03-10 19:57 dengxin.chen Exp $
+ * @version: $ TimeUtils.java,v0.1 2025-03-11 09:32 dengxin.chen Exp $
  * @description:
  */
 public class TimeUtils {
@@ -14,32 +14,42 @@ public class TimeUtils {
     /**
      * 最大年数值
      */
-    public static final int MAX_YEAR_VALUE = 9999;
+    private static final int MAX_YEAR_VALUE = 999999999;
+
+    /**
+     * 最小年数值
+     */
+    private static final int MIN_YEAR_VALUE = -999999999;
 
     /**
      * 最大月数值
      */
-    public static final int MAX_MONTH_VALUE = 12;
+    private static final int MAX_MONTH_VALUE = 12;
 
     /**
      * 最大天数值
      */
-    public static final int MAX_DAY_VALUE = 31;
+    private static final int MAX_DAY_VALUE = 31;
+
+    /**
+     * 最小的天与月的值
+     */
+    private static final int MIN_DAY_MOMTH_VALUE = 1;
 
     /**
      * 二月最大天数值
      */
-    public static final int FEB_MAX_DAY_VALUE = 29;
+    private static final int FEB_MAX_DAY_VALUE = 29;
 
     /**
      * 闰年二月天数
      */
-    public static final int LEAP_YEAR_FEB_DAY_VALUE = 29;
+    private static final int LEAP_YEAR_FEB_DAY_VALUE = 29;
 
     /**
      * 固定月与天数映射
      */
-    public static Map<Integer, Integer> FIXED_MONTH_MAP_DAY = new HashMap<Integer, Integer>() {{
+    private static final Map<Integer, Integer> FIXED_MONTH_MAP_DAY = new HashMap<Integer, Integer>() {{
         // 大月
         put(1, 31);
         put(3, 31);
@@ -85,22 +95,31 @@ public class TimeUtils {
      */
     private static boolean checkDate(int year, int month, int day) {
         // 年校验
-        if (year <= 0 || year > MAX_YEAR_VALUE) {
+        if (year < MIN_YEAR_VALUE || year > MAX_YEAR_VALUE) {
             return false;
         }
         // 月份校验
-        if (month <= 0 || month > MAX_MONTH_VALUE) {
+        if (month < MIN_DAY_MOMTH_VALUE || month > MAX_MONTH_VALUE) {
             return false;
         }
-        // 天数校验
-        if (day <= 0 || day > MAX_DAY_VALUE) {
+        // 先对天数进行整体校验
+        if (day < MIN_DAY_MOMTH_VALUE || day > MAX_DAY_VALUE) {
             return false;
         }
+        // 对每个月的天数进行校验
+        Integer monthMaxDay = FIXED_MONTH_MAP_DAY.get(month);
         // 二月份特殊校验
-        if (month == 2 && day > FEB_MAX_DAY_VALUE) {
-            return false;
+        if (Objects.isNull(monthMaxDay)) {
+            boolean leapYear = isLeapYear(year);
+            if (leapYear) {
+                return day <= FEB_MAX_DAY_VALUE;
+            } else {
+                return day <= (FEB_MAX_DAY_VALUE - 1);
+            }
+        } else {
+            // 其他月校验
+            return day <= monthMaxDay;
         }
-        return true;
     }
 
     /**
@@ -117,18 +136,16 @@ public class TimeUtils {
         if (month == 1) {
             return day;
         }
-        // 判断是否为闰年
-        boolean leapYear = isLeapYear(year);
         // 总天数先赋值为最后月天数
         int totalDays = day;
         for (int monthIndex = 1; monthIndex <= month - 1; monthIndex++) {
             Integer monthTotalDay = FIXED_MONTH_MAP_DAY.get(monthIndex);
             // 为空，则表明是2月，则通过平闰年进行判断总天数
             if (Objects.isNull(monthTotalDay)) {
-                if (leapYear) {
+                if (isLeapYear(year)) {
                     totalDays += LEAP_YEAR_FEB_DAY_VALUE;
                 } else {
-                    totalDays += LEAP_YEAR_FEB_DAY_VALUE - 1;
+                    totalDays += (LEAP_YEAR_FEB_DAY_VALUE - 1);
                 }
             } else {
                 totalDays += monthTotalDay;
@@ -155,6 +172,17 @@ public class TimeUtils {
     }
 
     public static void main(String[] args) {
-        System.out.println(dayOfYear(2016, 3, 1));
+        // 闰年 rs=366
+        System.out.println(dayOfYear(2016, 12, 31));
+        // 平年 rs=365
+        System.out.println(dayOfYear(2106, 12, 31));
+        // 异常 rs=-1
+        System.out.println(dayOfYear(2106, 13, 31));
+        // 异常 rs=-1
+        System.out.println(dayOfYear(2016, 12, 32));
+        // 异常 rs=-1
+        System.out.println(dayOfYear(2016, 4, 31));
+        // 异常 rs=-1
+        System.out.println(dayOfYear(2016, 2, 31));
     }
 }
