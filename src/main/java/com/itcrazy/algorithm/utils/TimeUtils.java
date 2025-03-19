@@ -19,7 +19,7 @@ public class TimeUtils {
     /**
      * 最小年数值
      */
-    private static final int MIN_YEAR_VALUE = -999999999;
+    private static final int MIN_YEAR_VALUE = 0;
 
     /**
      * 最大月数值
@@ -95,7 +95,7 @@ public class TimeUtils {
      */
     private static boolean checkDate(int year, int month, int day) {
         // 年校验
-        if (year < MIN_YEAR_VALUE || year > MAX_YEAR_VALUE) {
+        if (year <= MIN_YEAR_VALUE || year > MAX_YEAR_VALUE) {
             return false;
         }
         // 月份校验
