@@ -1,0 +1,136 @@
+@startuml Spring Boot 核心原理组件图
+' 定义组件样式
+skinparam component {
+    BackgroundColor #f0f8ff
+    BorderColor #2c3e50
+    FontColor #2c3e50
+    FontSize 11
+}
+skinparam note {
+    BackgroundColor #e8f4f8
+    BorderColor #2980b9
+    FontSize 10
+}
+
+' 1. 核心入口：Spring Boot启动类
+component "Spring Boot 启动类" as BootStarter {
+    component "@SpringBootApplication" as MainAnnotation #e3f2fd
+    component "main() 方法" as MainMethod #e3f2fd
+}
+
+note left of MainAnnotation
+复合注解，包含3个核心注解：
+1. @SpringBootConfiguration（= @Configuration）
+2. @ComponentScan（扫描组件）
+3. @EnableAutoConfiguration（关键：开启自动配置）
+end note
+
+note right of MainMethod
+调用 SpringApplication.run()
+启动Spring上下文，触发自动配置流程
+end note
+
+' 2. 核心机制1：自动配置（AutoConfiguration）
+component "自动配置模块" as AutoConfig #ffe0b2 {
+    component "SpringFactoriesLoader" as FactoriesLoader
+    component "自动配置类（XXXAutoConfiguration）" as AutoConfigClass
+    component "条件注解（@Conditional）" as ConditionalAnno {
+        component "@ConditionalOnClass" as OnClass #fff3e0
+        component "@ConditionalOnMissingBean" as OnMissingBean #fff3e0
+        component "@ConditionalOnProperty" as OnProperty #fff3e0
+    }
+}
+
+note left of FactoriesLoader
+加载类路径下
+META-INF/spring.factories
+中的自动配置类（如WebMvcAutoConfiguration）
+end note
+
+note right of AutoConfigClass
+每个类对应一类场景配置（如Web、数据源）
+内部通过「条件注解」控制生效逻辑
+end note
+
+note bottom of ConditionalAnno
+核心逻辑：
+仅当满足条件（如类存在、Bean不存在、配置生效）时，才实例化Bean
+end note
+
+' 3. 核心机制2：Starters 依赖管理
+component "Starters 依赖模块" as Starters #d5f5e3 {
+    component "官方Starters" as OfficialStarters
+    component "自定义Starters" as CustomStarters
+    component "依赖传递与版本控制" as DepManagement
+}
+
+note left of OfficialStarters
+如 spring-boot-starter-web
+整合 Spring Web + Spring MVC + 嵌入式Tomcat
+end note
+
+note right of CustomStarters
+遵循「约定」：
+1. 提供依赖描述（pom.xml）
+2. 包含自动配置类
+3. 配置 META-INF/spring.factories
+end note
+
+note bottom of DepManagement
+基于 spring-boot-dependencies
+统一管理第三方依赖版本（如Spring、Tomcat）
+避免版本冲突
+end note
+
+' 4. 核心机制3：嵌入式容器
+component "嵌入式容器模块" as EmbeddedContainer #fce4ec {
+    component "默认容器：Tomcat" as Tomcat #f3e5f5
+    component "可选容器：Jetty/Undertow" as OtherContainers #f3e5f5
+    component "容器自动配置类" as ContainerAutoConfig
+}
+
+note right of ContainerAutoConfig
+如 TomcatAutoConfiguration
+通过条件注解判断是否启用对应容器
+（默认类路径有Tomcat则启用）
+end note
+
+' 5. 核心机制4：外部化配置
+component "外部化配置模块" as ExternalConfig #fff8e1 {
+    component "配置源" as ConfigSources {
+        component "application.properties/yaml" as PropYaml #fff3e0
+        component "环境变量（ENV）" as EnvVar #fff3e0
+        component "命令行参数" as CmdArgs #fff3e0
+    }
+    component "@ConfigurationProperties" as ConfigPropAnno
+}
+
+note bottom of ConfigSources
+配置优先级：
+命令行参数 > 环境变量 > application.yaml
+end note
+
+note right of ConfigPropAnno
+将配置文件中的属性
+绑定到JavaBean（如ServerProperties）
+供自动配置类使用
+end note
+
+' 6. 最终产物：Spring IoC容器
+component "Spring IoC 容器" as IoCContainer #e8f5e9
+
+note left of IoCContainer
+自动配置类实例化的Bean
++ 业务代码中的Bean（@Component/@Service等）
+最终统一管理于IoC容器
+end note
+
+' 绘制组件间依赖关系
+BootStarter --> AutoConfig : 触发自动配置流程\n（通过@EnableAutoConfiguration）
+Starters --> AutoConfig : 提供自动配置所需的依赖类
+Starters --> EmbeddedContainer : 提供容器依赖
+AutoConfig --> EmbeddedContainer : 自动配置容器Bean
+AutoConfig --> ExternalConfig : 读取外部化配置参数
+AutoConfig --> IoCContainer : 将配置好的Bean注册到容器
+ExternalConfig --> EmbeddedContainer : 配置容器参数
+@enduml
